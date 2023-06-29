@@ -8,8 +8,8 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["Dotnet_App/GadgetsOnline/GadgetsOnline.csproj", "GadgetsOnline/"]
 RUN dotnet restore "GadgetsOnline/GadgetsOnline.csproj"
-COPY . .
 WORKDIR "/src/GadgetsOnline"
+COPY . .
 RUN dotnet build "GadgetsOnline.csproj" -c Release -o /app/build
 
 FROM build AS publish
