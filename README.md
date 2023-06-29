@@ -71,7 +71,7 @@ The purpose of this repo is to showcase the process of containerizing and deploy
     $ aws cloudformation create-stack --stack-name ${CFN_STACK_NAME} \
     --parameters ParameterKey=StackTemplateLocation,ParameterValue=${YAML_S3_BUCKET_URL} \
       ParameterKey=EKSKubernetesVersion,ParameterValue=${KUBERNETES_VERSION} \
-    --template-url ${YAML_S3_BUCKET_URL}CFN_Yaml/Main_CFN_Template.yaml \
+    --template-url ${YAML_S3_BUCKET_URL}/CFN_Yaml/Main_CFN_Template.yaml \
     --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND CAPABILITY_NAMED_IAM
     ```
 
