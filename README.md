@@ -30,9 +30,9 @@ The purpose of this repo is to showcase the process of containerizing and deploy
 
     > **Warning**
     > If you open a new terminal/session to run steps in this procedure, you need to set some or all of the environment variables again. To remind yourself of these values, type:
-    > echo $AWS_DEFAULT_REGION $AWS_ACCOUNT_ID $AWS_CLI_PROFILE_NAME $TEMPDIR $KUBERNETES_VERSION $EKS_CLUSTER_NAME
+    > `echo $AWS_DEFAULT_REGION $AWS_ACCOUNT_ID $AWS_CLI_PROFILE_NAME $TEMPDIR $KUBERNETES_VERSION $EKS_CLUSTER_NAME`
 
-3. Create Required SSM Parameters using AWS CLI command (aws ssm put-parameter --type SecureString --overwrite --name <Parameter_Name> --value <Parameter_Value>). These parameters are used by the CloudFormation template and Jenkins configuration script. Not setting or misconfiguring these SSM Parameters will leads to failure in CloudFormation template deployment or failure in configuring Jenkins.
+3. Create Required SSM Parameters using AWS CLI command (`aws ssm put-parameter --type SecureString --overwrite --name <Parameter_Name> --value <Parameter_Value>`). These parameters are used by the CloudFormation template and Jenkins configuration script. Not setting or misconfiguring these SSM Parameters will leads to failure in CloudFormation template deployment or failure in configuring Jenkins.
     1. [GitHub-Access-Token](https://docs.github.com/en/enterprise-server@3.4/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
         ```
         $ aws ssm put-parameter --type SecureString --overwrite --name GitHub-Access-Token --value <Parameter_Value>
@@ -54,7 +54,7 @@ The purpose of this repo is to showcase the process of containerizing and deploy
         $ aws ssm put-parameter --type SecureString --overwrite --name Jenkins-Password --value "$(cat /dev/urandom | env LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)"
         ```
 
-    > **Info**
+    > **Note**
     > Provide same Access Key and Secret Access Key you used to configure your AWS CLI above in the SSM parameters IAM-Admin-Access-Key-ID and IAM-User-Secret-Access-Key.
 
 4. Clone this repo and upload all the directories and files except DotNet_App to a S3 bucket and then create following environment variable.
@@ -62,7 +62,7 @@ The purpose of this repo is to showcase the process of containerizing and deploy
     $ export YAML_S3_BUCKET_URL='https://s3.amazonaws.com/<your_bucket_name>/<patch to the location where repo files are uploaded>'
     ```
 
-    > **Info**
+    > **Note**
     > Replace <your_bucket_name> and <patch to the location where repo files are uploaded> with your S3 bucket name and path where repo files were uploaded.
 
 ### CFN Stack creation
@@ -75,7 +75,7 @@ The purpose of this repo is to showcase the process of containerizing and deploy
     --capabilities CAPABILITY_IAM CAPABILITY_AUTO_EXPAND CAPABILITY_NAMED_IAM
     ```
 
-    > **Info**
+    > **Note**
     > Stack creation can easily take 15 to 20 min, so please be patient.
 
 ### Creation of Jenkins CI/CD pipeline
@@ -91,18 +91,18 @@ The purpose of this repo is to showcase the process of containerizing and deploy
     1. Navigate to "Dashboard" and select "New Item"
     2. In "item name" field, provide a name (say: GadgetsOnlineAppPipeline) for the pipeline.
     3. Select "Pipeline" from the options displayed below the "item name" text box and then select "OK".
-    4. Select the CheckBox for "GitHub project" and in "Project url" text box provide SSH URL of our GitHub Repo which is "git@github.com:santosh-at-github/dotnet_on_graviton.git"
+    4. Select the CheckBox for "GitHub project" and in "Project url" text box provide SSH URL of our GitHub Repo which is `git@github.com:santosh-at-github/dotnet_on_graviton.git`
     5. Under "Build Triggers" section, select "GitHub hook trigger for GITScm polling"
     6. In "Pipeline" drop-down, select "Pipeline script from SCM".
     7. In "SCM" drop-down, select "Git".
-    8. In "Repository URL" text field, provide our GitHub Repo SSH URL "git@github.com:santosh-at-github/dotnet_on_graviton.git"
+    8. In "Repository URL" text field, provide our GitHub Repo SSH URL `git@github.com:santosh-at-github/dotnet_on_graviton.git`
     9. In "Credentials" drop-down select the entry starting with "git". The Error should disappear after selecting the Credential.
     10. In "Branch Specifier" field, replace "master" with "main".
     11. Provide "Script Path" as "Jenkins_Config/Jenkinsfile" and click on "Save".
     12. Now in the pipeline menu, select "Build Now" to manually trigger the build.
     13. To trigger build automatically, provide Jankins WebHook URL in your GitHub Repo Setting as explained [here](https://www.blazemeter.com/blog/how-to-integrate-your-github-repository-to-your-jenkins-project).
-        PayLoad URL should be in following format: http://\<Jenkins_ELB_DNS\>/github-webhook/\
-        Content Type should be "application/json".
+        PayLoad URL should be in following format: `http://\<Jenkins_ELB_DNS\>/github-webhook/`\
+        Content Type should be `application/json`.
     14. Once the WebHook PayLoad URL and application setting is saved, then Jenkins will be notified for all the commit which happens to this repo so that Jenkins can trigger the build-pipeline.
 9. Once the Jenkins build pipeline completes successfully, it will deploy the GadgetsOnline application on our EKS Cluster as Deployment and a LoadBalancer Service.
 

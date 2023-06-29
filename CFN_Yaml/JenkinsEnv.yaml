@@ -236,7 +236,7 @@ Resources:
                 fi
               done
               # Copy JCasC file to $JENKINS_HOME/jenkins.yaml so that it is loaded after the service restart
-              wget -q -O $Jenkins_Home/jenkins.yaml https://raw.githubusercontent.com/santosh07bec/GadgetsOnline/main/JenkinsCasC.yaml
+              wget -q -O $Jenkins_Home/jenkins.yaml https://raw.githubusercontent.com/santosh-at-github/dotnet_on_graviton/main/Jenkins_Config/JenkinsCasC.yaml
               # sed -ie "s/<ENV_ALB_DNS>/$ALB_DNS/g" $Jenkins_Home/jenkins.yaml
               sed -i -e "s/Ec2KeyPairID/${Ec2KeyPairID}/g" \
                 -e "s/AWS_REGION/${AWS::Region}/g" \
