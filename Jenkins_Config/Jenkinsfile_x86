@@ -57,21 +57,10 @@ pipeline {
                 label 'aws_ec2_linux_al2_arm64'
             }
             steps {
-               # echo 'Test 1: Checking if image is multi-arch'
-               # sh '''
-               # DOCKER='docker --config ./docker-buildx-config'
-                export AWS_REGION=$(curl -s 169.254.169.254/latest/meta-data/placement/region)
-                aws ecr get-login-password --region $AWS_REGION | $DOCKER login --username AWS --password-stdin $ECR_Repo
-               # PLATFORMS=$($DOCKER buildx imagetools inspect $ECR_Repo:$BUILD_ID --format "{{json .Manifest}}" | jq ".manifests[].platform.architecture" | xargs)
-               # if [[ $PLATFORMS =~ "arm" ]] && [[ $PLATFORMS =~ "amd" ]]; then
-               #   echo "Image is multi-arch. Test PASSED!!"
-               # else
-               #   echo "Image is not multi-arch. Test FAILED."
-               #   exit 1
-               # fi
-               # '''
                 echo 'Test 1: Checking if container is being created from the image.'
                 sh '''
+                export AWS_REGION=$(curl -s 169.254.169.254/latest/meta-data/placement/region)
+                aws ecr get-login-password --region $AWS_REGION | $DOCKER login --username AWS --password-stdin $ECR_Repo
                 DOCKER='docker --config ./docker-buildx-config'
                 DOCKER_ID=$($DOCKER run -d -p 8888:80 $ECR_Repo:$BUILD_ID)
                 sleep 5
