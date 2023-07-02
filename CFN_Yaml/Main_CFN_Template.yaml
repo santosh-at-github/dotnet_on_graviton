@@ -143,7 +143,7 @@ Resources:
         EKSNodeInstanceRole: !GetAtt
         - IamStack
         - Outputs.EKSNodeInstanceRole
-        EKSNodeAmiType: !Ref EKSNodeAmiType
+        EKSNodeAmiType: 'AL2_x86_64'
 
 Outputs:
   JenkinsURL:
