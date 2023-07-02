@@ -126,6 +126,24 @@ Resources:
         - IamStack
         - Outputs.EKSNodeInstanceRole
         EKSNodeAmiType: !Ref EKSNodeAmiType
+  EKSm5xlNodeGroupStack:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: !Join [ '', [ !Ref StackTemplateLocation, '/CFN_Yaml/EKSClusterNodeGroup.yaml']]
+      TimeoutInMinutes: '10'
+      Parameters:
+        PrivateSubnets: !GetAtt
+        - VPC
+        - Outputs.PrivateSubnets
+        ClusterSecurityGroupId: !GetAtt
+        - EKSClusterStack
+        - Outputs.ClusterSecurityGroupId
+        EKSClusterName: !Ref EKSClusterName
+        EKSNodeInstanceType: 'm5.xlarge'
+        EKSNodeInstanceRole: !GetAtt
+        - IamStack
+        - Outputs.EKSNodeInstanceRole
+        EKSNodeAmiType: !Ref EKSNodeAmiType
 
 Outputs:
   JenkinsURL:
