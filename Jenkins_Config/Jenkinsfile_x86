@@ -87,7 +87,7 @@ pipeline {
                   yq 'select(documentIndex == 0)' ./K8s_Yaml/EKSDeployment.yaml | kubectl apply -f -
                   yq "select(documentIndex == 1)|.spec.template.spec.containers[0].env += \
                   {\\\"name\\\": \\\"IMAGE_TAG\\\", \\\"value\\\": \\\"$BUILD_ID\\\"} | \
-                  .spec.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].values=\\\"amd64\\\"" \
+                  .spec.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].values[0]=\\\"amd64\\\"" \
                   ./K8s_Yaml/EKSDeployment.yaml | kubectl apply -f - 
                   # kubectl apply -f ./K8s_Yaml/EKSDeployment.yaml
                   kubectl get svc,pod -o wide
