@@ -59,8 +59,8 @@ jenkins:
   # Cloud config for launching onDemand Jenkins Agents
   clouds:
   - amazonEC2:
-      cloudName: "Amazon EC2 workers"
       instanceCapStr: "5"
+      name: "Amazon EC2 workers"
       region: "AWS_REGION"
       sshKeysCredentialsId: "EC2-Instance-Key"
       templates:
@@ -71,18 +71,20 @@ jenkins:
         associatePublicIp: false
         connectBySSHProcess: true
         connectionStrategy: PRIVATE_IP
-        deleteRootOnTermination: true
+        deleteRootOnTermination: false
         description: "Linux x86_64 AL2 AMI"
         ebsEncryptRootVolume: DEFAULT
         ebsOptimized: false
         hostKeyVerificationStrategy: 'OFF'
         iamInstanceProfile: "JENKINS_AGENT_INSTANCE_PROFILE"
         idleTerminationMinutes: "30"
+        instanceCapStr: "5"
         javaPath: "java"
         labelString: "aws_ec2_linux_al2_x86_64"
         maxTotalUses: -1
         metadataEndpointEnabled: true
         metadataHopsLimit: 1
+        metadataSupported: true
         metadataTokensRequired: false
         minimumNumberOfInstances: 0
         minimumNumberOfSpareInstances: 0
@@ -95,6 +97,9 @@ jenkins:
         stopOnTerminate: false
         subnetId: "JENKINS_AGENT_SUBNETS"
         t2Unlimited: false
+        tags:
+        - name: "JenkinsAgent"
+          value: "True"
         tenancy: Default
         type: C5Xlarge
         useEphemeralDevices: false
@@ -124,23 +129,28 @@ jenkins:
         hostKeyVerificationStrategy: 'OFF'
         iamInstanceProfile: "JENKINS_AGENT_INSTANCE_PROFILE"
         idleTerminationMinutes: "30"
+        instanceCapStr: "5"
         javaPath: "java"
         labelString: "aws_ec2_linux_al2_arm64"
         maxTotalUses: -1
         metadataEndpointEnabled: true
         metadataHopsLimit: 1
+        metadataSupported: true
         metadataTokensRequired: false
         minimumNumberOfInstances: 0
         minimumNumberOfSpareInstances: 0
         mode: EXCLUSIVE
         monitoring: false
-        numExecutors: 1
+        numExecutors: 5
         remoteAdmin: "ec2-user"
-        remoteFS: "./jenkins"
+        remoteFS: "./jenkinsAgent"
         securityGroups: "JENKINS_AGENT_SG"
         stopOnTerminate: false
         subnetId: "JENKINS_AGENT_SUBNETS"
         t2Unlimited: false
+        tags:
+        - name: "JenkinsAgent"
+          value: "True"
         tenancy: Default
         type: C6gXlarge
         useEphemeralDevices: false
