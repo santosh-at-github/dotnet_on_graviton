@@ -11,8 +11,8 @@ public class Application {
 
     @RequestMapping("/")
     public String home() {
-        String str = "<!DOCTYPE html><html><head><title>Hello World</title></head><body><p>Hello Docker World.</p><p>I'm running inside Amazon EKS and the Java Runtime version is " + System.getProperty("java.runtime.version") + " from "+ System.getProperty("java.vm.name") + " and my Java home is " + System.getProperty("java.home") + "</p>";
-        str = str.concat("<p>Operating System details: ").concat(System.getProperty("os.arch")).concat(" ").concat(System.getProperty("os.name")).concat(" ").concat(System.getProperty("os.version")).concat("</p>");
+        String str = "<!DOCTYPE html><html><head><title>Hello World</title></head><body><p>Hello Docker World.</p><br><p>I'm running inside Amazon EKS and the Java Runtime version is " + System.getProperty("java.runtime.version") + " from "+ System.getProperty("java.vm.name") + " and my Java home is " + System.getProperty("java.home") + "</p>";
+        str = str.concat("<br><p>Operating System details: ").concat(System.getProperty("os.arch")).concat(" ").concat(System.getProperty("os.name")).concat(" ").concat(System.getProperty("os.version")).concat("</p>");
         str = str.concat("<br><p>Note: This is for demonstration purposes ONLY !! </p></body></html>");
         return str;
     }
