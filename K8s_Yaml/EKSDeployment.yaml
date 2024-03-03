@@ -1,31 +1,32 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: gadgets-online-svc
+  name: java-sample-app-svc
   labels:
-    app: gadgets-online
+    app: java-sample-app
 spec:
   type: LoadBalancer
   ports:
   - port: 80
+    targetPort: 8080
   selector:
-    app: gadgets-online
+    app: java-sample-app
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: gadgets-online-deploy
+  name: java-sample-app-deploy
   labels:
-    app: gadgets-online
+    app: java-sample-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: gadgets-online
+      app: java-sample-app
   template:
     metadata:
       labels:
-        app: gadgets-online
+        app: java-sample-app
     spec:
       affinity:
         nodeAffinity:
@@ -37,10 +38,10 @@ spec:
                 values:
                 - arm64
       containers:
-      - name: gadgets-online
+      - name: java-sample-app
         image: nginx:latest
         ports:
-        - containerPort: 80
+        - containerPort: 8080
         env:
         - name: dbmode
           value: inMem
