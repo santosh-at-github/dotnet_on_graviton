@@ -48,7 +48,7 @@ pipeline {
                 $DOCKER buildx ls
                 aws ecr get-login-password --region $REGION | $DOCKER login --username AWS --password-stdin $ECR_Repo
                 $DOCKER buildx build -t $ECR_Repo:$BUILD_ID --platform linux/amd64 --builder jenkins \
-                --build-arg BUILDKIT_MULTI_PLATFORM=1 -f ./Dotnet_App/GadgetsOnline/Dockerfile --push .
+                --build-arg BUILDKIT_MULTI_PLATFORM=1 -f ./Java_App/Dockerfile --push .
                 '''
             }
         }
