@@ -50,9 +50,9 @@ credentials:
           username: ${IAM-Admin-Access-Key-ID}
           password: ${IAM-User-Secret-Access-Key}
 jenkins:
-  agentProtocols:
-  - 'JNLP4-connect'
-  - 'Ping'
+  # agentProtocols:
+  # - 'JNLP4-connect'
+  # - 'Ping'
   authorizationStrategy:
     loggedInUsersCanDoAnything:
       allowAnonymousRead: false
