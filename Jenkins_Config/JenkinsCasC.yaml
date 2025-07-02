@@ -105,7 +105,13 @@ jenkins:
         useEphemeralDevices: false
         userData: |-
           #!/bin/bash
-          yum install docker git jq -y
+          yum update -y
+          if grep -q "Amazon Linux release 2" /etc/os-release; then
+              # Amazon Linux 2
+              sudo amazon-linux-extras enable java-17-amazon-corretto
+              sudo yum clean metadata
+          fi
+          sudo yum install -y java-17-amazon-corretto fontconfig docker git jq
           usermod -aG docker ec2-user
           systemctl enable docker --now
           mkdir /home/ec2-user/.ssh
@@ -156,7 +162,13 @@ jenkins:
         useEphemeralDevices: false
         userData: |-
           #!/bin/bash
-          yum install docker git jq -y
+          yum update -y
+          if grep -q "Amazon Linux release 2" /etc/os-release; then
+              # Amazon Linux 2
+              sudo amazon-linux-extras enable java-17-amazon-corretto
+              sudo yum clean metadata
+          fi
+          sudo yum install -y java-17-amazon-corretto fontconfig docker git jq
           usermod -aG docker ec2-user
           systemctl enable docker --now
           mkdir /home/ec2-user/.ssh
