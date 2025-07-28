@@ -28,15 +28,40 @@ namespace GadgetsOnline.Controllers
             {
                 using (var httpClient = new HttpClient())
                 {
-                    var response = httpClient.GetAsync($"http://169.254.169.254/latest/meta-data/{path}").Result;
-                    if (response.IsSuccessStatusCode)
+                    try
                     {
-                        var metadataValue = response.Content.ReadAsStringAsync().Result;
-                        metadataCache[path] = metadataValue;
+                        // Get IMDSv2 token
+                        var tokenRequest = new HttpRequestMessage(HttpMethod.Put, "http://169.254.169.254/latest/api/token");
+                        tokenRequest.Headers.Add("X-aws-ec2-metadata-token-ttl-seconds", "21600");
+                        var tokenResponse = httpClient.SendAsync(tokenRequest).Result;
+                        
+                        if (tokenResponse.IsSuccessStatusCode)
+                        {
+                            var token = tokenResponse.Content.ReadAsStringAsync().Result;
+                            
+                            // Use token to get metadata
+                            var metadataRequest = new HttpRequestMessage(HttpMethod.Get, $"http://169.254.169.254/latest/meta-data/{path}");
+                            metadataRequest.Headers.Add("X-aws-ec2-metadata-token", token);
+                            var response = httpClient.SendAsync(metadataRequest).Result;
+                            
+                            if (response.IsSuccessStatusCode)
+                            {
+                                var metadataValue = response.Content.ReadAsStringAsync().Result;
+                                metadataCache[path] = metadataValue;
+                            }
+                            else
+                            {
+                                metadataCache[path] = "Unknown";
+                            }
+                        }
+                        else
+                        {
+                            metadataCache[path] = "Token Error";
+                        }
                     }
-                    else
+                    catch
                     {
-                        metadataCache[path] = "Unknown";
+                        metadataCache[path] = "Error";
                     }
                 }
             }

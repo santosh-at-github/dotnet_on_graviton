@@ -50,9 +50,9 @@ credentials:
           username: ${IAM-Admin-Access-Key-ID}
           password: ${IAM-User-Secret-Access-Key}
 jenkins:
-  # agentProtocols:
-  # - 'JNLP4-connect'
-  # - 'Ping'
+  agentProtocols:
+  - 'JNLP4-connect'
+  - 'Ping'
   authorizationStrategy:
     loggedInUsersCanDoAnything:
       allowAnonymousRead: false
@@ -85,7 +85,7 @@ jenkins:
         metadataEndpointEnabled: true
         metadataHopsLimit: 1
         metadataSupported: true
-        metadataTokensRequired: false
+        metadataTokensRequired: true
         minimumNumberOfInstances: 0
         minimumNumberOfSpareInstances: 0
         mode: EXCLUSIVE
@@ -105,13 +105,7 @@ jenkins:
         useEphemeralDevices: false
         userData: |-
           #!/bin/bash
-          yum update -y
-          if grep -q "Amazon Linux release 2" /etc/os-release; then
-              # Amazon Linux 2
-              sudo amazon-linux-extras enable java-17-amazon-corretto
-              sudo yum clean metadata
-          fi
-          sudo yum install -y java-17-amazon-corretto fontconfig docker git jq
+          yum install docker git jq -y
           usermod -aG docker ec2-user
           systemctl enable docker --now
           mkdir /home/ec2-user/.ssh
@@ -142,7 +136,7 @@ jenkins:
         metadataEndpointEnabled: true
         metadataHopsLimit: 1
         metadataSupported: true
-        metadataTokensRequired: false
+        metadataTokensRequired: true
         minimumNumberOfInstances: 0
         minimumNumberOfSpareInstances: 0
         mode: EXCLUSIVE
@@ -162,13 +156,7 @@ jenkins:
         useEphemeralDevices: false
         userData: |-
           #!/bin/bash
-          yum update -y
-          if grep -q "Amazon Linux release 2" /etc/os-release; then
-              # Amazon Linux 2
-              sudo amazon-linux-extras enable java-17-amazon-corretto
-              sudo yum clean metadata
-          fi
-          sudo yum install -y java-17-amazon-corretto fontconfig docker git jq
+          yum install docker git jq -y
           usermod -aG docker ec2-user
           systemctl enable docker --now
           mkdir /home/ec2-user/.ssh
