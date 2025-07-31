@@ -35,7 +35,8 @@ pipeline {
             steps {
                 echo 'Building Docker Image'
                 sh '''
-                REGION=$(curl -s 169.254.169.254/latest/meta-data/placement/region)
+                TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+                REGION=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s 169.254.169.254/latest/meta-data/placement/region)
                 BUILDER_NAME='jenkins'
                 DOCKER='docker --config ./docker-buildx-config'
                 #$DOCKER -H ssh://ec2-user@$X86_AGENT_PRIVATE_IP info
@@ -59,7 +60,8 @@ pipeline {
             steps {
                 echo 'Test 1: Checking if container is being created from the image.'
                 sh '''
-                export AWS_REGION=$(curl -s 169.254.169.254/latest/meta-data/placement/region)
+                TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+                export AWS_REGION=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s 169.254.169.254/latest/meta-data/placement/region)
                 DOCKER='docker --config ./docker-buildx-config'
                 aws ecr get-login-password --region $AWS_REGION | $DOCKER login --username AWS --password-stdin $ECR_Repo
                 DOCKER_ID=$($DOCKER run -d -p 8888:80 $ECR_Repo:$BUILD_ID)
@@ -80,7 +82,8 @@ pipeline {
             steps {
                 withAWS(credentials: 'IAM-Admin-Credential') {
                   sh '''
-                  export AWS_REGION=$(curl -s 169.254.169.254/latest/meta-data/placement/region)
+                  TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+                  export AWS_REGION=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s 169.254.169.254/latest/meta-data/placement/region)
                   aws eks update-kubeconfig --name $EKS_Cluster
                   kubectl get pod --all-namespaces
                   sed -ie "/image:/s_nginx:latest_${DockerImage}_" ./K8s_Yaml/EKSDeployment.yaml

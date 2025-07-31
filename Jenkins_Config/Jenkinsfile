@@ -55,7 +55,7 @@ pipeline {
             }
             steps {
                 script{
-                    def priv_ip = sh(returnStdout: true, script: 'echo $(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)').trim()
+                    def priv_ip = sh(returnStdout: true, script: 'TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"); echo $(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s http://169.254.169.254/latest/meta-data/local-ipv4)').trim()
                     env.X86_AGENT_PRIVATE_IP = priv_ip
                 }
             }
@@ -81,7 +81,8 @@ pipeline {
                     def amd_ip = env.X86_AGENT_PRIVATE_IP
                     echo "AMD Private IP: ${amd_ip}"
                     sh '''
-                    REGION=$(curl -s 169.254.169.254/latest/meta-data/placement/region)
+                    TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+                    REGION=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s 169.254.169.254/latest/meta-data/placement/region)
                     BUILDER_NAME='jenkins'
                     DOCKER='docker --config ./docker-buildx-config'
                     $DOCKER -H ssh://ec2-user@$X86_AGENT_PRIVATE_IP info
@@ -107,7 +108,8 @@ pipeline {
                 echo 'Test 1: Checking if image is multi-arch'
                 sh '''
                 DOCKER='docker --config ./docker-buildx-config'
-                export AWS_REGION=$(curl -s 169.254.169.254/latest/meta-data/placement/region)
+                TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+                export AWS_REGION=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s 169.254.169.254/latest/meta-data/placement/region)
                 aws ecr get-login-password --region $AWS_REGION | $DOCKER login --username AWS --password-stdin $ECR_Repo
                 PLATFORMS=$($DOCKER buildx imagetools inspect $ECR_Repo:$BUILD_ID --format "{{json .Manifest}}" | jq ".manifests[].platform.architecture" | xargs)
                 if [[ $PLATFORMS =~ "arm" ]] && [[ $PLATFORMS =~ "amd" ]]; then
@@ -138,7 +140,8 @@ pipeline {
             steps {
                 withAWS(credentials: 'IAM-Admin-Credential') {
                   sh '''
-                  export AWS_REGION=$(curl -s 169.254.169.254/latest/meta-data/placement/region)
+                  TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+                  export AWS_REGION=$(curl -H "X-aws-ec2-metadata-token: $TOKEN" -s 169.254.169.254/latest/meta-data/placement/region)
                   aws eks update-kubeconfig --name $EKS_Cluster
                   kubectl get pod --all-namespaces
                   sed -ie "/image:/s_nginx:latest_${DockerImage}_" ./K8s_Yaml/EKSDeployment.yaml
